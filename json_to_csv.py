@@ -6,7 +6,7 @@ from giturlparse import parse
 lines = None
 
 with open('links.txt','r') as f:
-    lines = f.readlines()
+    lines = list(set(f.readlines()))
 
 
 csv_dict = {
