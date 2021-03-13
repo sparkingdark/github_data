@@ -9,7 +9,7 @@ def search_github(keywords):
     query = '+'.join(keywords) + '+in:readme+in:description'
     result = g.search_repositories(query, 'stars', 'desc')
  
-    print(f'Found {result.totalCount} repo(s)')
+    #print(f'Found {result.totalCount} repo(s)')
 
     return result
  
@@ -25,4 +25,4 @@ if __name__ == '__main__':
         for repo in result:
             if repo.stargazers_count>60:
                 f.writelines(repo.clone_url+"\n")
-                print(f'{repo.clone_url}, {repo.stargazers_count} stars')
+                #print(f'{repo.clone_url}, {repo.stargazers_count} stars')
