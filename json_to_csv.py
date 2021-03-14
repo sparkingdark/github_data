@@ -1,9 +1,12 @@
+import os
+from glob import glob
 import pandas as pd 
 from giturlparse import parse
-import os
+from time import time
 
 
-def json_to_csv(filename,root_name):
+
+def json_to_csv(filename):
 
     lines = None
     
@@ -30,11 +33,42 @@ def json_to_csv(filename,root_name):
     print(csv_dict)
 
     df = pd.DataFrame(data=csv_dict)
-    open("./csv/"+root_name+str(".csv"),'w+').close()
-    df.to_csv("./csv/"+root_name)
+    os.chdir("./csv/")
+    open(str(time())+str(".csv"),'w+').close()
+    csv_filename = str(time())+str(".csv")+'.csv'
+    df.to_csv(csv_filename)
+
+
+def single_csv(dir_path):
+    
+    lines = None
+    
+    with open(dir_path,'r') as f:
+        lines = list(set(f.readlines()))
+
+
+    csv_dict = {
+        "name":[],
+        "repo":[],
+        "owner":[],
+        #"user":[],
+        "link":[]
+    }
+
+    for i in lines:
+        data = parse(i)
+        csv_dict["name"].append(data.name)
+        csv_dict["repo"].append(data.repo)
+        csv_dict["owner"].append(data.owner)
+        #csv_dict["user"].append(data.user)
+        csv_dict["link"].append(i)
+
+    print(csv_dict)
+
+    df = pd.DataFrame(data=csv_dict)
+    df.to_csv('./data.csv')
 
 
 if __name__=="__main__":
-    for filename in os.listdir("./links/"):
-        root_name = os.path.splitext(filename)[0]
-        json_to_csv(os.path.join("./links/",filename),root_name)
+    dir_path = 'links.txt'
+    single_csv(dir_path)

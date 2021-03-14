@@ -26,7 +26,7 @@ def keyword_list(keywords=list()):
             all_splitted_text.append(keyword_splitter(word_list))
     return all_splitted_text
 
-def write_to_csv(keywords):
+def write_to_txt(keywords):
     result = search_github(keywords)
     filename = "".join(keywords)+".txt"
     with open(filename,'w+') as f:
@@ -43,5 +43,5 @@ if __name__=="__main__":
     print(all_text)
 
     for i in all_text:
-        write_to_csv(i)
+        write_to_txt(i)
         sleep(10)
