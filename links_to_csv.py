@@ -34,9 +34,9 @@ def json_to_csv(filename):
 
     df = pd.DataFrame(data=csv_dict)
     os.chdir("./csv/")
-    open(str(time())+str(".csv"),'w+').close()
-    csv_filename = str(time())+str(".csv")+'.csv'
-    df.to_csv(csv_filename)
+    filename = str(time())+str(".csv")
+    open(filename,'w+').close()
+    df.to_csv(filename)
 
 
 def single_csv(dir_path):
@@ -45,6 +45,7 @@ def single_csv(dir_path):
     
     with open(dir_path,'r') as f:
         lines = list(set(f.readlines()))
+    print(len(lines))    
 
 
     csv_dict = {
@@ -63,7 +64,7 @@ def single_csv(dir_path):
         #csv_dict["user"].append(data.user)
         csv_dict["link"].append(i)
 
-    print(csv_dict)
+    #print(csv_dict)
 
     df = pd.DataFrame(data=csv_dict)
     df.to_csv('./data.csv')

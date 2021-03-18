@@ -7,9 +7,9 @@ g = Github(ACCESS_TOKEN)
  
 def search_github(keywords):
     query = '+'.join(keywords) + '+in:readme+in:description'
-    result = g.search_repositories(query, 'stars', 'desc')
+    result = list(g.search_repositories(query, 'stars', 'desc'))
  
-    #print(f'Found {result.totalCount} repo(s)')
+    #print('Found {}repo(s)'.format(result.totalCount))
 
     return result
  
