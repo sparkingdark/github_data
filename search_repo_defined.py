@@ -20,7 +20,7 @@ def search_github(keywords,filename):
         try:
             repo  = next(iter_obj)
             with open(filename, 'a+') as f:
-                f.write(repo.clone_url + '\n')
+                f.write(repo.clone_url + ','+str(repo.stargazers_count)+ '\n')
                 count += 1
                 #logger.info(count)
                 print(count)

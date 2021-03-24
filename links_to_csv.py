@@ -3,15 +3,21 @@ from glob import glob
 import pandas as pd 
 from giturlparse import parse
 from time import time
+from github import  Github,RateLimitExceededException
+import github
+import time
+from time import sleep
+import calendar
 
+ACCESS_TOKEN = '6e9d18c39a5574590a7b1ec6b780ac3167f835fc'
+ 
+g = Github(ACCESS_TOKEN)
 
-
-def json_to_csv(filename):
-
-    lines = None
+def json_to_csv(filename=None,lines=None):
     
-    with open(filename,'r') as f:
-        lines = list(set(f.readlines()))
+    if lines==None and filename!=None:
+        with open(filename,'r') as f:
+            lines = list(set(f.readlines()))
 
 
     csv_dict = {
@@ -19,7 +25,8 @@ def json_to_csv(filename):
         "repo":[],
         "owner":[],
         #"user":[],
-        "link":[]
+        "link":[],
+        "stars":[]
     }
 
     for i in lines:
@@ -29,6 +36,7 @@ def json_to_csv(filename):
         csv_dict["owner"].append(data.owner)
         #csv_dict["user"].append(data.user)
         csv_dict["link"].append(i)
+        csv_dict["stars"].append(data.stars)
 
     print(csv_dict)
 
@@ -39,37 +47,46 @@ def json_to_csv(filename):
     df.to_csv(filename)
 
 
-def single_csv(dir_path):
+def single_csv(filename=None,lines=None,owner=None):
     
-    lines = None
+    if lines==None and filename!=None:
+        with open(filename,'r') as f:
+            lines = list(set(f.readlines()))
     
-    with open(dir_path,'r') as f:
-        lines = list(set(f.readlines()))
+   
     print(len(lines))    
 
 
     csv_dict = {
-        "name":[],
-        "repo":[],
-        "owner":[],
-        #"user":[],
-        "link":[]
+        "stars":[]
     }
 
-    for i in lines:
-        data = parse(i)
-        csv_dict["name"].append(data.name)
-        csv_dict["repo"].append(data.repo)
-        csv_dict["owner"].append(data.owner)
-        #csv_dict["user"].append(data.user)
-        csv_dict["link"].append(i)
+    for i,j in zip(owner,lines):
+        try:
+            print(i,"/",j)
+            data = g.get_repo(i+"/"+j)
+            csv_dict["stars"].append(data.stargazers_count)
+            print(data.stargazers_count)
+        except StopIteration:
+            break  # loop end
+        except RateLimitExceededException:
+            search_rate_limit = g.get_rate_limit().search
+            print('search remaining: {}'.format(search_rate_limit.remaining))
+            reset_timestamp = calendar.timegm(search_rate_limit.reset.timetuple())
+                    # add 10 seconds to be sure the rate limit has been reset
+            sleep_time = reset_timestamp - calendar.timegm(time.gmtime()) + 10
+            time.sleep(sleep_time)
+            continue  
+        except Exception:
+            continue  
 
-    #print(csv_dict)
+    print(csv_dict)
 
     df = pd.DataFrame(data=csv_dict)
-    df.to_csv('./data.csv')
-
+    return df
 
 if __name__=="__main__":
-    dir_path = 'links.txt'
-    single_csv(dir_path)
+    df = pd.read_csv('./final.csv')
+    df_star = single_csv(lines=list(df["repo"]),owner=list(df["owner"]))
+    df["star"] = df_star
+    df.to_csv("./mod.csv")
