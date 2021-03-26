@@ -9,11 +9,12 @@ import time
 from time import sleep
 import calendar
 
+
 ACCESS_TOKEN = '6e9d18c39a5574590a7b1ec6b780ac3167f835fc'
  
 g = Github(ACCESS_TOKEN)
 
-def json_to_csv(filename=None,lines=None):
+def links_to_csv(filename=None,lines=None):
     
     if lines==None and filename!=None:
         with open(filename,'r') as f:
@@ -24,9 +25,8 @@ def json_to_csv(filename=None,lines=None):
         "name":[],
         "repo":[],
         "owner":[],
-        #"user":[],
         "link":[],
-        "stars":[]
+        #"stars":[]
     }
 
     for i in lines:
@@ -36,15 +36,17 @@ def json_to_csv(filename=None,lines=None):
         csv_dict["owner"].append(data.owner)
         #csv_dict["user"].append(data.user)
         csv_dict["link"].append(i)
-        csv_dict["stars"].append(data.stars)
+        #csv_dict["stars"].append(data.stars)
 
     print(csv_dict)
 
     df = pd.DataFrame(data=csv_dict)
-    os.chdir("./csv/")
-    filename = str(time())+str(".csv")
+    # filename = str(time())+str(".csv")
     open(filename,'w+').close()
     df.to_csv(filename)
+
+    
+
 
 
 def single_csv(filename=None,lines=None,owner=None):
@@ -86,7 +88,12 @@ def single_csv(filename=None,lines=None,owner=None):
     return df
 
 if __name__=="__main__":
-    df = pd.read_csv('./final.csv')
-    df_star = single_csv(lines=list(df["repo"]),owner=list(df["owner"]))
-    df["star"] = df_star
-    df.to_csv("./mod.csv")
+    df = pd.read_csv('./cv_pro.csv')
+    print(df.head())
+
+    # links_to_csv(filename="./cv_pro.csv",lines=list(set(df.links)))
+
+    links = df["link"]
+    owner = df["owner"]
+
+    df_mod = single_csv(links,owner)

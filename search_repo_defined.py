@@ -60,10 +60,10 @@ def keyword_list(keywords=list()):
 
 if __name__=="__main__":
     #all_keywords = ["awesome,deep learning","awesome,machine learning","awesome,python","awesome,computer vision","awesome,nlp","awesome,supervised learning","awesome,RL",'awesome,Reinforcement learning']
-    all_keywords = ["computer vision,python","computer vision,projects",]
+    all_keywords = ["awesome,deep learning","awesome,machine learning","awesome,nlp","awesome,gcp","awesome,azure","awesome,data science",]
     all_text = keyword_list(all_keywords)
 
     print(all_text)
 
     for i in all_text:
-        search_github(i,"links.txt")
+        search_github(i,"awesome_repo.csv")
